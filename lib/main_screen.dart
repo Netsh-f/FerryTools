@@ -20,7 +20,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('FerryTools Main Screen'),
+        title: const Text('FerryTools'),
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
