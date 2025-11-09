@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 
-class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+class SettingPage extends StatelessWidget {
+  const SettingPage({super.key});
 
   @override
   Widget build(BuildContext context) {
     return const Center(
-      child: Text('Welcome to the Home Page!'),
+      child: Text('Welcome to the Setting Page!'),
     );
   }
 }
