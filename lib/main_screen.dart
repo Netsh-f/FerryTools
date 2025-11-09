@@ -24,6 +24,8 @@ class _MainScreenState extends State<MainScreen> {
       ),
       body: _pages[_currentIndex],
       bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: (i) => setState(() => _currentIndex = i),
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -34,7 +36,6 @@ class _MainScreenState extends State<MainScreen> {
             label: 'Settings',
           ),
         ],
-        onTap: (i) => setState(() => _currentIndex = i),
       ),
     );
   }
