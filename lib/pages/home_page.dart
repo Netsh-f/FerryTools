@@ -12,8 +12,8 @@ class HomePage extends StatelessWidget {
         _buildToolTile(
           context: context,
           icon: Icons.casino,
-          title: 'Lotto Generator',
-          subtitle: 'Pick your lucky numbers',
+          title: '乐透号码生成器',
+          subtitle: '选取幸运数字，祝你中大奖！',
           onTap: () => Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (_) => const LottoPage())),
@@ -21,8 +21,8 @@ class HomePage extends StatelessWidget {
         _buildToolTile(
           context: context,
           icon: Icons.calculate,
-          title: 'Calculator',
-          subtitle: 'Quick math operations',
+          title: '其他小工具',
+          subtitle: '敬请期待...',
           onTap: () => Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (_) => const LottoPage())),
@@ -42,7 +42,7 @@ class HomePage extends StatelessWidget {
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        leading: Icon(icon, color: Theme.of(context).primaryColor),
+        leading: Icon(icon),
         title: Text(title),
         subtitle: Text(subtitle),
         onTap: onTap,

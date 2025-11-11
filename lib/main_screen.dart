@@ -3,7 +3,14 @@ import 'package:ferrytools/pages/setting_page.dart';
 import 'package:flutter/material.dart';
 
 class MainScreen extends StatefulWidget {
-  const MainScreen({super.key});
+  final Function(bool) onToggleTheme;
+  final ThemeMode currentThemeMode;
+
+  const MainScreen({
+    super.key,
+    required this.onToggleTheme,
+    required this.currentThemeMode,
+  });
 
   @override
   State<MainScreen> createState() => _MainScreenState();
@@ -12,20 +19,23 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   int _currentIndex = 0;
 
-  static final List<_NavigationItem> _navigationItems = [
-    _NavigationItem(
-      label: 'Home',
-      icon: Icons.home_outlined,
-      selectedIcon: Icons.home,
-      page: const HomePage(),
-    ),
-    _NavigationItem(
-      label: 'Settings',
-      icon: Icons.settings_outlined,
-      selectedIcon: Icons.settings,
-      page: const SettingPage(),
-    ),
-  ];
+  List<_NavigationItem> get _navigationItems => [
+        _NavigationItem(
+          label: '主页',
+          icon: Icons.home_outlined,
+          selectedIcon: Icons.home,
+          page: const HomePage(),
+        ),
+        _NavigationItem(
+          label: '设置',
+          icon: Icons.settings_outlined,
+          selectedIcon: Icons.settings,
+          page: SettingPage(
+            onToggleTheme: widget.onToggleTheme,
+            currentThemeMode: widget.currentThemeMode,
+          ),
+        ),
+      ];
 
   @override
   Widget build(BuildContext context) {
@@ -112,7 +122,6 @@ class _DesktopLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       appBar: AppBar(title: const Text('FerryTools')),
       body: Row(
