@@ -20,12 +20,10 @@ class HomePage extends StatelessWidget {
         ),
         _buildToolTile(
           context: context,
-          icon: Icons.calculate,
+          icon: Icons.devices_other,
           title: '其他小工具',
           subtitle: '敬请期待...',
-          onTap: () => Navigator.of(
-            context,
-          ).push(MaterialPageRoute(builder: (_) => const LottoPage())),
+          onTap: () {},
         ),
         // 继续添加更多工具...
       ],
