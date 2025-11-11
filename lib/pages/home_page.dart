@@ -1,3 +1,4 @@
+import 'package:ferrytools/pages/anan_page.dart';
 import 'package:ferrytools/pages/lotto_page.dart';
 import 'package:flutter/material.dart';
 
@@ -17,6 +18,15 @@ class HomePage extends StatelessWidget {
           onTap: () => Navigator.of(
             context,
           ).push(MaterialPageRoute(builder: (_) => const LottoPage())),
+        ),
+        _buildToolTile(
+          context: context,
+          icon: Icons.people,
+          title: '夏目安安表情包生成器',
+          subtitle: '吾辈命令你【进来】！',
+          onTap: () => Navigator.of(
+            context,
+          ).push(MaterialPageRoute(builder: (_) => const AnanPage())),
         ),
         _buildToolTile(
           context: context,
