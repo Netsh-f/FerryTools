@@ -87,7 +87,7 @@ class _LottoPageState extends State<LottoPage> {
           ),
 
           Padding(
-            padding: const EdgeInsets.only(bottom: 24.0),
+            padding: const EdgeInsets.only(bottom: 60.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
