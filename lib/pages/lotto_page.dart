@@ -53,7 +53,7 @@ class _LottoPageState extends State<LottoPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Super Lotto Generator'),
+        title: const Text('超级大乐透号码生成器'),
         centerTitle: true,
       ),
       body: Column(
@@ -74,7 +74,7 @@ class _LottoPageState extends State<LottoPage> {
             child: ElevatedButton.icon(
               onPressed: _generateLotto,
               icon: const Icon(Icons.autorenew),
-              label: const Text('Generate', style: TextStyle(fontSize: 16)),
+              label: const Text('生成', style: TextStyle(fontSize: 16)),
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(200, 50),
                 shape: RoundedRectangleBorder(
