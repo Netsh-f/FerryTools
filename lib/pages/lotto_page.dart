@@ -1,5 +1,6 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 class LottoPage extends StatefulWidget {
   const LottoPage({super.key});
@@ -43,6 +44,25 @@ class _LottoPageState extends State<LottoPage> {
     });
   }
 
+  Future<void> _copyToClipboard() async {
+    final StringBuffer buffer = StringBuffer();
+    for (final line in _lottoNumbers) {
+      // 过滤掉 '+'，只保留数字
+      final numbers = line.where((part) => part != '+').join(' ');
+      buffer.writeln(numbers);
+    }
+    final text = buffer.toString().trim();
+
+    await Clipboard.setData(ClipboardData(text: text));
+
+    // 可选：弹出提示
+    if (context.mounted) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(const SnackBar(content: Text('已复制到剪贴板')));
+    }
+  }
+
   @override
   void initState() {
     super.initState();
@@ -52,10 +72,7 @@ class _LottoPageState extends State<LottoPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('超级大乐透号码生成器'),
-        centerTitle: true,
-      ),
+      appBar: AppBar(title: const Text('超级大乐透号码生成器'), centerTitle: true),
       body: Column(
         children: [
           Expanded(
@@ -71,16 +88,35 @@ class _LottoPageState extends State<LottoPage> {
 
           Padding(
             padding: const EdgeInsets.only(bottom: 24.0),
-            child: ElevatedButton.icon(
-              onPressed: _generateLotto,
-              icon: const Icon(Icons.autorenew),
-              label: const Text('生成', style: TextStyle(fontSize: 16)),
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(200, 50),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(30),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                // 生成按钮
+                ElevatedButton.icon(
+                  onPressed: _generateLotto,
+                  icon: const Icon(Icons.autorenew),
+                  label: const Text('生成', style: TextStyle(fontSize: 16)),
+                  style: ElevatedButton.styleFrom(
+                    minimumSize: const Size(120, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
                 ),
-              ),
+                const SizedBox(width: 16),
+                // 复制按钮
+                ElevatedButton.icon(
+                  onPressed: _copyToClipboard,
+                  icon: const Icon(Icons.copy),
+                  label: const Text('复制', style: TextStyle(fontSize: 16)),
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(120, 50),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ),
         ],
