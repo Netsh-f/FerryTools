@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:flutter/services.dart';
+import 'package:flutter/rendering.dart';
+import 'package:universal_html/html.dart' as html;
 
 class AnanPage extends StatefulWidget {
   const AnanPage({super.key});
@@ -14,6 +16,7 @@ class _AnanPageState extends State<AnanPage> {
   String _displayText = '';
   ui.Image? _templateImage;
   TemplateImageType selectedImageType = TemplateImageType.base;
+  final GlobalKey _repaintBoundaryKey = GlobalKey();
 
   Future<void> _loadImage(TemplateImageType imageType) async {
     final image = await _loadTemplateImage(imageType);
@@ -57,6 +60,34 @@ class _AnanPageState extends State<AnanPage> {
     super.dispose();
   }
 
+  Future<void> _exportImage() async {
+    // 获取 RepaintBoundary 状态
+    RenderRepaintBoundary? boundary =
+        _repaintBoundaryKey.currentContext?.findRenderObject()
+            as RenderRepaintBoundary?;
+
+    if (boundary == null) return;
+
+    // 将 RepaintBoundary 转换为图像
+    ui.Image image = await boundary.toImage(pixelRatio: 2.0); // 提高清晰度
+
+    ByteData? byteData = await image.toByteData(format: ui.ImageByteFormat.png);
+    if (byteData == null) return;
+
+    Uint8List pngBytes = byteData.buffer.asUint8List();
+
+    // 创建 Blob 对象并生成下载链接
+    final blob = html.Blob([pngBytes], 'image/png');
+    final url = html.Url.createObjectUrlFromBlob(blob);
+    final anchor = html.AnchorElement(href: url)
+      ..setAttribute(
+        'download',
+        'anan_meme_${DateTime.now().millisecondsSinceEpoch}.png',
+      );
+    anchor.click();
+    html.Url.revokeObjectUrl(url);
+  }
+
   @override
   Widget build(BuildContext context) {
     double imageWidth = 541;
@@ -77,15 +108,18 @@ class _AnanPageState extends State<AnanPage> {
               Expanded(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 16.0), // 在图片下方添加间距
-                  child: _templateImage == null
-                      ? const Center(child: CircularProgressIndicator())
-                      : CustomPaint(
-                          painter: MemePainter(
-                            templateImage: _templateImage!,
-                            text: _displayText,
+                  child: RepaintBoundary(
+                    key: _repaintBoundaryKey,
+                    child: _templateImage == null
+                        ? const Center(child: CircularProgressIndicator())
+                        : CustomPaint(
+                            painter: MemePainter(
+                              templateImage: _templateImage!,
+                              text: _displayText,
+                            ),
+                            size: Size.infinite,
                           ),
-                          size: Size.infinite,
-                        ),
+                  ),
                 ),
               ),
 
@@ -156,6 +190,13 @@ class _AnanPageState extends State<AnanPage> {
                     ElevatedButton(
                       onPressed: _onGeneratePressed,
                       child: const Text('生成'),
+                    ),
+                    const SizedBox(width: 8), // 间距
+                    ElevatedButton(
+                      onPressed: _displayText.isEmpty
+                          ? null
+                          : _exportImage, // 无文字时禁用
+                      child: const Text('下载'),
                     ),
                   ],
                 ),
