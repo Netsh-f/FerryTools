@@ -73,26 +73,6 @@ class _AnanPageState extends State<AnanPage> {
             mainAxisSize: MainAxisSize.min, // 让Column只占用必要的空间
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Padding(
-                padding: const EdgeInsets.symmetric(vertical: 8.0),
-                child: DropdownButton<TemplateImageType>(
-                  value: selectedImageType,
-                  items: TemplateImageType.values.map((TemplateImageType type) {
-                    return DropdownMenuItem<TemplateImageType>(
-                      value: type,
-                      child: Text(type.name),
-                    );
-                  }).toList(),
-                  onChanged: (TemplateImageType? newValue) {
-                    if (newValue != null) {
-                      setState(() {
-                        selectedImageType = newValue;
-                        _loadImage(newValue); // 根据选择加载对应的底图
-                      });
-                    }
-                  },
-                ),
-              ),
               // 预览区域
               Expanded(
                 child: Padding(
@@ -129,10 +109,55 @@ class _AnanPageState extends State<AnanPage> {
               ),
               // 按钮区域
               Padding(
-                padding: const EdgeInsets.all(16.0), // 在按钮周围添加间距
-                child: ElevatedButton(
-                  onPressed: _onGeneratePressed,
-                  child: const Text('生成'),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16.0,
+                  vertical: 8.0,
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // DropdownButton放在左边
+                    Padding(
+                      padding: const EdgeInsets.only(
+                        right: 8.0,
+                      ), // 给DropdownButton右边添加一些间距
+                      child: DropdownButton<TemplateImageType>(
+                        value: selectedImageType,
+                        items: TemplateImageType.values.map((
+                          TemplateImageType type,
+                        ) {
+                          return DropdownMenuItem<TemplateImageType>(
+                            value: type,
+                            child: Container(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 8.0,
+                              ),
+                              child: Text(
+                                type.cnName,
+                                style: const TextStyle(fontSize: 16),
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                        onChanged: (TemplateImageType? newValue) {
+                          if (newValue != null) {
+                            setState(() {
+                              selectedImageType = newValue;
+                              _loadImage(newValue);
+                            });
+                          }
+                        },
+                        icon: const Icon(Icons.arrow_drop_down),
+                        underline: Container(),
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                    ),
+                    // 生成按钮放在右边
+                    ElevatedButton(
+                      onPressed: _onGeneratePressed,
+                      child: const Text('生成'),
+                    ),
+                  ],
                 ),
               ),
             ],
@@ -144,15 +169,16 @@ class _AnanPageState extends State<AnanPage> {
 }
 
 enum TemplateImageType {
-  base('anan_base.png'),
-  happy('anan_happy.png'),
-  speechless('anan_speechless.png'),
-  yandere('anan_yandere.png'),
-  blush('anan_blush.png'),
-  angry('anan_angry.png');
+  base('anan_base.png', '正常'),
+  happy('anan_happy.png', '开心'),
+  speechless('anan_speechless.png', '无语'),
+  yandere('anan_yandere.png', '病娇'),
+  blush('anan_blush.png', '脸红'),
+  angry('anan_angry.png', '生气');
 
   final String assetName;
-  const TemplateImageType(this.assetName);
+  final String cnName;
+  const TemplateImageType(this.assetName, this.cnName);
 }
 
 class MemePainter extends CustomPainter {
