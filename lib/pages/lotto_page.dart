@@ -55,12 +55,11 @@ class _LottoPageState extends State<LottoPage> {
 
     await Clipboard.setData(ClipboardData(text: text));
 
-    // 可选：弹出提示
-    if (context.mounted) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('已复制到剪贴板')));
-    }
+    if (!mounted) return;
+
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('已复制到剪贴板')));
   }
 
   @override
