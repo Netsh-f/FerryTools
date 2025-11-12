@@ -37,8 +37,16 @@ class _AnanPageState extends State<AnanPage> {
   }
 
   void _onGeneratePressed() {
+    String inputText = _textController.text.trim();
+    final int maxChars = 50;
+
+    if (inputText.length > maxChars) {
+      // 如果输入的文本超过了最大字符数，则截断文本，并在末尾添加省略号
+      inputText = inputText.substring(0, maxChars) + '……';
+    }
+
     setState(() {
-      _displayText = _textController.text.trim();
+      _displayText = inputText;
     });
   }
 
@@ -114,34 +122,33 @@ class _AnanPageState extends State<AnanPage> {
   }
 }
 
-// 自定义绘制器
 class MemePainter extends CustomPainter {
   final ui.Image templateImage;
   final String text;
+
+  // 定义最大和最小字体大小占图片高度的比例
+  final double maxFontSizeRatio = 0.08; // 最大字号为图片高度的8%
+  final double minFontSizeRatio = 0.04; // 最小字号为图片高度的4%
 
   MemePainter({required this.templateImage, required this.text});
 
   @override
   void paint(Canvas canvas, Size size) {
-    double imgAspectRatio = templateImage.width / templateImage.height; // 图片宽高比
-    double canvasAspectRatio = size.width / size.height; // 当前画布宽高比
+    double imgAspectRatio = templateImage.width / templateImage.height;
+    double canvasAspectRatio = size.width / size.height;
 
     double drawWidth, drawHeight;
     if (canvasAspectRatio > imgAspectRatio) {
-      // 如果画布较宽
       drawHeight = size.height;
       drawWidth = drawHeight * imgAspectRatio;
     } else {
-      // 如果画布较高
       drawWidth = size.width;
       drawHeight = drawWidth / imgAspectRatio;
     }
 
-    // 计算居中位置
     double dx = (size.width - drawWidth) / 2;
     double dy = (size.height - drawHeight) / 2;
 
-    // 绘制底图（按原比例缩放）
     canvas.drawImageRect(
       templateImage,
       Rect.fromLTWH(
@@ -155,21 +162,22 @@ class MemePainter extends CustomPainter {
     );
 
     if (text.isNotEmpty) {
-      // 根据提供的相对坐标计算实际的矩形范围
       final textRectLTRB = [
-        Offset(drawWidth * 0.18 + dx, drawHeight * 0.8 + dy), // 左上角
+        Offset(drawWidth * 0.18 + dx, drawHeight * 0.75 + dy), // 左上角
         Offset(drawWidth * 0.78 + dx, drawHeight * 0.9 + dy), // 右下角
       ];
 
-      // 确定文本框的最大宽度和高度
       final maxWidth = textRectLTRB[1].dx - textRectLTRB[0].dx;
       final maxHeight = textRectLTRB[1].dy - textRectLTRB[0].dy;
 
-      // 动态调整字体大小
-      double fontSize = 40; // 初始字体大小
+      // 根据图片高度动态计算最大和最小字号
+      double maxFontSize = drawHeight * maxFontSizeRatio;
+      double minFontSize = drawHeight * minFontSizeRatio;
+
+      double fontSize = maxFontSize; // 初始字体大小为最大字号
       TextPainter textPainter;
       do {
-        fontSize -= 1; // 减小字体大小
+        fontSize -= 1;
         textPainter = TextPainter(
           text: TextSpan(
             text: text,
@@ -185,9 +193,8 @@ class MemePainter extends CustomPainter {
         textPainter.layout(maxWidth: maxWidth);
       } while ((textPainter.width > maxWidth ||
               textPainter.height > maxHeight) &&
-          fontSize > 2); // 设置最小字号为10
+          fontSize > minFontSize);
 
-      // 计算文本应该放置的位置以使其在指定矩形内居中
       final x = textRectLTRB[0].dx + (maxWidth - textPainter.width) / 2;
       final y = textRectLTRB[0].dy + (maxHeight - textPainter.height) / 2;
 
