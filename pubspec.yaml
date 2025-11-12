@@ -19,4 +19,9 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
+    - assets/anan/anan_base.png
     - assets/anan/anan_happy.png
+    - assets/anan/anan_speechless.png
+    - assets/anan/anan_yandere.png
+    - assets/anan/anan_blush.png
+    - assets/anan/anan_angry.png

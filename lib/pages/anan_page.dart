@@ -13,15 +13,10 @@ class _AnanPageState extends State<AnanPage> {
   final TextEditingController _textController = TextEditingController();
   String _displayText = '';
   ui.Image? _templateImage;
+  TemplateImageType selectedImageType = TemplateImageType.base;
 
-  @override
-  void initState() {
-    super.initState();
-    _loadImage();
-  }
-
-  Future<void> _loadImage() async {
-    final image = await _loadTemplateImage();
+  Future<void> _loadImage(TemplateImageType imageType) async {
+    final image = await _loadTemplateImage(imageType);
     if (mounted) {
       setState(() {
         _templateImage = image;
@@ -29,11 +24,17 @@ class _AnanPageState extends State<AnanPage> {
     }
   }
 
-  Future<ui.Image> _loadTemplateImage() async {
-    final data = await rootBundle.load('assets/anan/anan_happy.png');
+  Future<ui.Image> _loadTemplateImage(TemplateImageType imageType) async {
+    final data = await rootBundle.load('assets/anan/${imageType.assetName}');
     final codec = await ui.instantiateImageCodec(data.buffer.asUint8List());
     final frame = await codec.getNextFrame();
     return frame.image;
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _loadImage(selectedImageType); // 初始化时加载默认底图
   }
 
   void _onGeneratePressed() {
@@ -42,7 +43,7 @@ class _AnanPageState extends State<AnanPage> {
 
     if (inputText.length > maxChars) {
       // 如果输入的文本超过了最大字符数，则截断文本，并在末尾添加省略号
-      inputText = inputText.substring(0, maxChars) + '……';
+      inputText = '${inputText.substring(0, maxChars)}……';
     }
 
     setState(() {
@@ -72,6 +73,26 @@ class _AnanPageState extends State<AnanPage> {
             mainAxisSize: MainAxisSize.min, // 让Column只占用必要的空间
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Padding(
+                padding: const EdgeInsets.symmetric(vertical: 8.0),
+                child: DropdownButton<TemplateImageType>(
+                  value: selectedImageType,
+                  items: TemplateImageType.values.map((TemplateImageType type) {
+                    return DropdownMenuItem<TemplateImageType>(
+                      value: type,
+                      child: Text(type.name),
+                    );
+                  }).toList(),
+                  onChanged: (TemplateImageType? newValue) {
+                    if (newValue != null) {
+                      setState(() {
+                        selectedImageType = newValue;
+                        _loadImage(newValue); // 根据选择加载对应的底图
+                      });
+                    }
+                  },
+                ),
+              ),
               // 预览区域
               Expanded(
                 child: Padding(
@@ -120,6 +141,18 @@ class _AnanPageState extends State<AnanPage> {
       ),
     );
   }
+}
+
+enum TemplateImageType {
+  base('anan_base.png'),
+  happy('anan_happy.png'),
+  speechless('anan_speechless.png'),
+  yandere('anan_yandere.png'),
+  blush('anan_blush.png'),
+  angry('anan_angry.png');
+
+  final String assetName;
+  const TemplateImageType(this.assetName);
 }
 
 class MemePainter extends CustomPainter {
